@@ -1,38 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 using Netvir.Events;
+using Netvir.Attributes;
 
 namespace Netvir.Services
 {
+    [Service("Listener")]
     class HttpResponseProcess
     {
-        public static void PrintReceivedMessage(object sender, HttpMessageEventArgs e)
+        public static async Task Dispatch(HttpMessageEventArgs e)
         {
-            Console.WriteLine(e.Request.RawUrl);
-
-            string ResponseString = "Valid response required for testing";
-            byte[] Buffer = Encoding.UTF8.GetBytes(ResponseString);
-
-            e.Response.ContentLength64 = Buffer.Length;
-            Stream Output = e.Response.OutputStream;
-            Output.Write(Buffer, 0, Buffer.Length);
-
-            Output.Close();
+            // TODO: Implement Dispatch w/ other services
         }
 
-        public static void StartingNotice(object sender, EventArgs e)
+        public static Task StartingNotice()
         {
             Console.WriteLine("Start listening...");
+            return Task.CompletedTask;
         }
 
-        public static void StopListeningNotice(object sender, EventArgs e)
+        public static Task StopListeningNotice()
         {
             Console.WriteLine("I'm not sure about that...");
+            return Task.CompletedTask;
         }
     }
 }

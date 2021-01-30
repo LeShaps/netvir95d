@@ -4,6 +4,8 @@ using Discord.Commands;
 using System;
 using System.Threading.Tasks;
 
+using Netvir.Exceptions;
+
 namespace Netvir.Utilities
 {
     class Loggers
@@ -12,7 +14,10 @@ namespace Netvir.Utilities
         {
             await LogAsync(msg);
 
-            if (msg.Exception is CommandException ex)
+            if (msg.Exception is CommandException cex && cex.InnerException is UnavailableServiceException)
+            {
+                await cex.Context.Channel.SendMessageAsync($"Unavailable service! {cex.InnerException.Message}");
+            } else if (msg.Exception is CommandException ex)
             {
                 await ex.Context.Channel.SendMessageAsync("", false, new EmbedBuilder
                 {

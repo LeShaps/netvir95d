@@ -11,7 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\Exceptions\" />
+    <Folder Include="Services\Log\" />
+    <Folder Include="Services\Update\" />
   </ItemGroup>
 
 </Project>

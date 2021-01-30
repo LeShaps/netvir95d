@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Threading;
-
+using System.Threading.Tasks;
 using Netvir.Events;
 
 namespace Netvir.Services
@@ -11,9 +11,9 @@ namespace Netvir.Services
         private readonly Thread _listenerThread;
         private HttpListener _listener;
 
-        public event EventHandler<HttpMessageEventArgs> OnMessageReceived;
-        public event EventHandler OnStartListening;
-        public event EventHandler OnStopListening;
+        public event Func<HttpMessageEventArgs, Task> OnMessageReceived;
+        public event Func<Task> OnStartListening;
+        public event Func<Task> OnStopListening;
 
         public Listener(params string[] WatchDomains)
         {
@@ -50,28 +50,28 @@ namespace Netvir.Services
                 HttpListenerRequest Request = Context.Request;
                 HttpListenerResponse Response = Context.Response;
 
-                OnMessage(new HttpMessageEventArgs
+                _ = OnMessageAsync(new HttpMessageEventArgs
                 {
                     Authorized = true,
                     Request = Request,
                     Response = Response
-                });
+                }).ConfigureAwait(false);
             }
         }
 
-        protected virtual void OnMessage(HttpMessageEventArgs e)
+        protected virtual async Task OnMessageAsync(HttpMessageEventArgs e)
         {
-            OnMessageReceived?.Invoke(this, e);
+            await OnMessageReceived?.Invoke(e);
         }
 
         protected virtual void OnStart(EventArgs e)
         {
-            OnStartListening?.Invoke(this, e);
+            OnStartListening?.Invoke();
         }
 
         protected virtual void OnStop(EventArgs e)
         {
-            OnStopListening?.Invoke(this, e);
+            OnStopListening?.Invoke();
         }
     }
 }
